@@ -32,6 +32,7 @@ class JokeList extends Component {
 
   async getJokes() {
     try {
+      
       let jokes = [];
       while (jokes.length < this.props.numJokesToGet) {
         let res = await axios.get("https://icanhazdadjoke.com/", {
@@ -45,11 +46,11 @@ class JokeList extends Component {
           console.log(newJoke);
         }
       }
+      this.sortJokeList();
       this.setState((st) => ({
         jokes: [...st.jokes, ...jokes],
         loading: false,
       }));
-
       window.localStorage.setItem("jokes", JSON.stringify(this.state.jokes));
     } catch (e) {
       alert(e);
@@ -61,6 +62,13 @@ class JokeList extends Component {
 
   displayJokes() {
     return this.state.jokes.map((j) => (
+      <Joke key={j.id} joke={j} handleVote={this.handleVote} />
+    ));
+  }
+
+  sortJokeList(){
+    let jokes = this.state.jokes.sort((a,b) => b.votes - a.votes);
+    return jokes.map((j) => (
       <Joke key={j.id} joke={j} handleVote={this.handleVote} />
     ));
   }
